@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Hetzner Cloud availability watcher for CX23 / CX33 / CX43.
+"""Hetzner Cloud availability watcher for CX33 / CX43.
 Needs: HCLOUD_TOKEN (read-only API token), NTFY_TOPIC (any hard-to-guess name).
 Alerts once when a type becomes available in a location, and once when it goes away again.
 """
 import json, os, urllib.request
 
-WANT = {"cx23", "cx33", "cx43"}
+WANT = {"cx33", "cx43"}
 API = "https://api.hetzner.cloud/v1"
 STATE = os.environ.get("STATE_FILE", "hetzner_state.json")
 
