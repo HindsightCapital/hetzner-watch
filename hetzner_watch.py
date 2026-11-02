@@ -25,6 +25,7 @@ while page:
     data = get(f"/server_types?per_page=50&page={page}")
     for t in data["server_types"]:
         if t["name"] in WANT:
+            print(t["name"], "locations:", [(l.get("name"), l.get("available")) for l in t.get("locations", [])])
             for loc in t.get("locations", []):
                 if loc.get("available"):
                     name = loc.get("name", "?")
