@@ -14,12 +14,22 @@ def get(path):
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
-types = {t["id"]: t["name"] for t in get("/server_types?per_page=50")["server_types"]}
+CITY = {"fsn1": "Falkenstein", "nbg1": "Nuremberg", "hel1": "Helsinki",
+        "ash": "Ashburn", "hil": "Hillsboro", "sin": "Singapore"}
+
+# Since Oct 2026 availability lives on server_types[].locations[].available
+# (the old /datacenters endpoint returns 410 Gone).
 now = set()
-for dc in get("/datacenters?per_page=50")["datacenters"]:
-    for tid in dc["server_types"]["available"]:
-        if types.get(tid) in WANT:
-            now.add(f'{types[tid].upper()} in {dc["location"]["city"]} ({dc["name"]})')
+page = 1
+while page:
+    data = get(f"/server_types?per_page=50&page={page}")
+    for t in data["server_types"]:
+        if t["name"] in WANT:
+            for loc in t.get("locations", []):
+                if loc.get("available"):
+                    name = loc.get("name", "?")
+                    now.add(f'{t["name"].upper()} in {CITY.get(name, name)} ({name})')
+    page = (data.get("meta", {}).get("pagination") or {}).get("next_page")
 
 try:
     before = set(json.load(open(STATE)))
