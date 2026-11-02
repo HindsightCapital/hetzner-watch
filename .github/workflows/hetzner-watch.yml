@@ -1,6 +1,7 @@
 name: hetzner-watch
 on:
-  schedule: [{cron: "*/10 * * * *"}]
+  schedule:
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 jobs:
   check:
@@ -8,7 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
-        with: {path: hetzner_state.json, key: hz-${{ github.run_id }}, restore-keys: hz-}
+        with:
+          path: hetzner_state.json
+          key: hz-${{ github.run_id }}
+          restore-keys: hz-
       - run: python3 hetzner_watch.py
         env:
           HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
